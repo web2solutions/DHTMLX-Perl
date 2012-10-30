@@ -11,6 +11,11 @@ SUMMARY
 
 Perl implementation that provides all needed back-end logic to the DHTMLX components
 
+STATUS
+------
+
+ **** under develpment ****
+
 
 License
 -------
