@@ -23,7 +23,8 @@ http://www.perl.org
 DHTMLX
 ------
 
-dhtmlxSuite is a rich JavaScript library that delivers a complete set of UI components
+dhtmlxSuite is a JavaScript library that provides a complete set of Ajax- powered UI components. 
+Use dhtmlxSuite to build enterprise-level web apps with clean interface, fast performance, and rich user experience.
 
 http://www.dhtmlx.com/
 
