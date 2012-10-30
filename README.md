@@ -3,7 +3,6 @@ DHTMLX-Perl
 
 DHTMLX Perl module
 
-TODO
-
-# Documentação
-# examples
+# TODO
+- Documentação
+- examples
