@@ -11,6 +11,13 @@ SUMMARY
 
 Perl implementation that provides all needed back-end logic to the DHTMLX components
 
+
+License
+-------
+
+Licensed under the GPL Version 3 license
+
+
 PERL
 ----
 
