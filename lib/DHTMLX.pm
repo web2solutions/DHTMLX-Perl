@@ -25,7 +25,7 @@ http://www.dhtmlx.com/
 
 =head1 EXAMPLES
 
-Take a look at examples/ folder
+Take a look at ../examples/ folder
     
 =head1 AUTHORS
 
