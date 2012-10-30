@@ -5,6 +5,20 @@ DHTMLX-Perl
 
 DHTMLX Perl module
 
+
+SUMMARY
+-------
+
+Perl implementation that provides all needed logic to the DHTMLX components
+
+DHTMLX
+------
+
+dhtmlxSuite is a rich JavaScript library that delivers a complete set of UI components
+
+http://www.dhtmlx.com/
+
+
 # TODO
 - Documentacao
 - examples
