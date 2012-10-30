@@ -15,7 +15,7 @@ Perl implementation that provides all needed back-end logic to the DHTMLX compon
 License
 -------
 
-Licensed under the GPL Version 3 license
+Licensed under the GNU GPL v2 license
 
 
 PERL
