@@ -16,6 +16,13 @@ STATUS
 
  **** under development ****
 
+EXAMPLES
+--------
+
+An application demo using DHTMLX Perl module
+
+http://repositorio.imovelmanager.com.br/extranet/modulos/GestordeClientes.html
+
 
 License
 -------
