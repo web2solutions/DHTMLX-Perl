@@ -14,7 +14,7 @@ Perl implementation that provides all needed back-end logic to the DHTMLX compon
 STATUS
 ------
 
- **** under develpment ****
+ **** under development ****
 
 
 License
