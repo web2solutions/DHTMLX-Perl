@@ -68,10 +68,10 @@ Grid, TreeGrid, Tree, Combo, Scheduler, DataView, Chart, Form
 	
 =head1 VERSION
 
-0.003
+0.004
 
 =cut
-    $VERSION = '0.003';
+    $VERSION = '0.004';
 
     my $table;
     my $primary_key;

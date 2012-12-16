@@ -2,19 +2,56 @@ package DHTMLX::Processor;
 
     @ISA = qw/ DHTMLX::Core /;
     
+    
+=encoding utf8
+=head1 NAME
+
+DHTMLX::Processor
+
+=head1 ABSTRACT
+
+DHTMLX Perl processor
+
+=head1 SYNOPSIS
+
+    use DHTMLX::Processor;
+    
+    # Instantiating DHTMLX::Processor object
+    my $connector = DHTMLX::Processor->new();
+
+    ## duplicate rows
+    my $table = "tbl_financeiro_fluxo_de_caixa";
+    my $pkey = "id";
+    my $rows =  "1,12,20";
+    $processor->copyrows( $table, $pkey, $rows );
+
+=head1 DESCRIPTION
+
+# Receive client requests and process an task
+
+# fully supported DataBases: PostgreSQL, MSSQL
+
+=cut
+
+    
     use strict;
     use warnings 'all';
     use JSON;
-    use Win32::ASP;
-    use Win32::OLE;
-    use utf8;
-    use WWW::Mechanize;
-    use HTML::TreeBuilder::XPath;
     use HTML::Entities;
+
+    use vars qw (
+	$VERSION
+    );
+	
+=head1 VERSION
+
+0.004
+
+=cut
+    $VERSION = '0.004';
+
     my $entitieschars = 'ÁÍÓÚÉÄÏÖÜËÀÌÒÙÈÃÕÂÎÔÛÊáíóúéäïöüëàìòùèãõâîôûêÇç';
     
-    my $servidor;
-
     sub new
     {
         my $class = shift;
@@ -23,16 +60,28 @@ package DHTMLX::Processor;
 	};
 	
 	bless $self, $class;
-	
-	if($self->framework eq "ASP")
-	{
-	    use Win32::OLE;
-	    Win32::OLE->Option( CP => Win32::OLE::CP_UTF8, LCID => 65001 );
-	}
        
         return $self;
     }
- 
+=head1 METHODS
+
+
+=head2 toFile
+
+Receives grid's html data and generates a report file.
+
+# Generate reports in PDF and DOC file formats
+# Portrait and landscape orientation. Default: portrait
+# Margin. Default: "2.5cm 3.0cm 3.0cm 2.5cm"; # sup, esq, dir, inf
+# Paper formats: A4, A5, A6, Executive, Letter, Oficio, Envelope10. Default: A4
+
+
+    
+$processor->toFile($diretorio, $nome, $documento, $type, $fylesystem, $logo, $dirlogo, $cabecalho, $rodape, $usarlayout, $formato, $margem, $orientation);
+
+
+
+=cut
     sub toFile ()
     {
 	my($self, $diretorio, $nome, $documento, $tipo, $fylesystem, $logo, $dirlogo, $cabecalho, $rodape, $usarlayout, $formatoDocumento, $dimensaoMargem, $orientation) = @_;
@@ -271,6 +320,10 @@ package DHTMLX::Processor;
 	my $html;
 	my $table_rows;
 	my $resultado;
+	
+	use WWW::Mechanize;
+	use HTML::TreeBuilder::XPath;
+	
 	my $mech = WWW::Mechanize->new;
 	$mech->post($URI);
 	$mech->submit_form(
@@ -352,9 +405,6 @@ package DHTMLX::Processor;
 	$p_key_name = $p_key_name || $self->error( "you must define the primary key name" );
 	$p_key_value = $p_key_value || $self->error( "you must define the primary key value" );
 	
-	
-	
-	
 	my $conexao = $self->conectar();
 	my $sql = "DELETE FROM $table WHERE $p_key_name IN($p_key_value)";
 
@@ -367,6 +417,65 @@ package DHTMLX::Processor;
 	    status  => "sucesso",
 	    response =>  "deletado com sucesso"
 	);     
+
+	my $json = \%resposta;
+	my $json_text = to_json($json);                           
+	print $json_text;
+    }
+    
+    sub copyrows()
+    {
+	my( $self, $table, $pkey, $rows ) = @_;
+	
+	$table = $table || $self->error( "you must define the table target" );
+	$pkey = $pkey || $self->error( "you must define the primary key of table" );
+	$rows = $rows || $self->error( "you must define at least one row to copy" );
+	
+	my $conexao = $self->conectar();
+
+	my @columns;
+	my $copies = 0;
+	
+	my $sth = $conexao->prepare("select column_name from information_schema.columns where table_name='$table';");
+	$sth->execute(  ) or $self->error( $conexao->errstr );
+	while(my $registro = $sth->fetchrow_hashref())
+	{
+	    my $column_name = $registro->{'column_name'};
+	    if($column_name ne $pkey)
+	    {
+		
+		push @columns, $column_name;
+	    }
+	}
+	$sth->finish;
+	
+	$sth = $conexao->prepare("INSERT INTO $table( ".join( ', ', @columns )." ) SELECT ".join( ', ', @columns )." FROM $table WHERE $pkey in ($rows);");
+	$sth->execute(  ) or $self->error( $conexao->errstr );
+	$copies = $sth->rows;
+	$sth->finish;	
+	
+	$conexao->disconnect;
+	my %resposta;
+	if($copies < 0)
+	{
+	    print "INSERT INTO tbl_clientes( ".join( ', ', @columns )." ) SELECT ".join( ', ', @columns )." FROM $table WHERE $pkey in ($rows);";
+	    %resposta = (
+		status  => "erro",
+		response =>  "erro ao duplicar",
+		copies =>  $copies,
+	    );   
+	    
+	}
+	else
+	{
+	    %resposta = (
+		status  => "sucesso",
+		response =>  "copiado com sucesso",
+		copies =>  $copies,
+	    );   
+	}
+	
+	  
 
 	my $json = \%resposta;
 	my $json_text = to_json($json);                           
@@ -482,7 +591,6 @@ package DHTMLX::Processor;
 	print $newDoc->toString();
     }
 
-    # Implementar somente em casos específicos, pois o Perl destroi o objeto automaticamente quando estiver fora de escopo.
     #sub DESTROY
     #{
     #   print "  GestordeInteresses::DESTROY foi executado.";
